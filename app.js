@@ -12,6 +12,8 @@ app.listen(port, () => {
     console.log(chalk.cyanBright.bold.italic(`Servidor inicializado escuchando en el puerto ${port}`));
 });
 
+//? INTENTO 1
+
 /* app.get("/pacientes", (req, res) => {
     axios.get("https://randomuser.me/api/?results=20")
     .then((data) => {
@@ -50,9 +52,9 @@ app.listen(port, () => {
     });
 }); */
 
-const pacientes = []
+//? INTENTO 2
 
-app.get("/pacientes", (req, res) => {
+/* app.get("/pacientes", (req, res) => {
     axios.get("https://randomuser.me/api/")
     .then((data) => {
         const pacientes = data.data.results;
@@ -66,18 +68,18 @@ app.get("/pacientes", (req, res) => {
             return `<li>Nombre: ${nombrePaciente} - Apellido: ${apellidoPaciente} - ID: ${uuidPorcion} - Timestamp: ${timestamp}</li>`;
         });
 
-        const respuesta = `<ol>${pacientesInfo.join('')}</ol>`;
+        const respuesta = `<ol>${pacientesInfo.join('')}</ol>`
 
-        pacientes.push(pacientesInfo)
-
-        res.send(pacientes);
-        console.log(pacientes)
+        res.send(respuesta);
+        console.log(respuesta)
     })
     .catch((error) => {
         console.log(error);
         res.status(500).send("Ha ocurrido un error.");
     });
-});
+}); */
+
+//? INTENTO 3
 
 /* 
 const pacientes = []
@@ -110,3 +112,128 @@ app.get("/pacientes", (req, res) => {
         res.status(500).send("Ha ocurrido un error.");
     });
 }); */
+
+//? INTENTO 4
+
+/* const pacientesRegistrados = []
+
+app.get("/pacientes", (req, res) => {
+    axios.get("https://randomuser.me/api/")
+    .then((data) => {
+        const pacientes = data.data.results;
+
+        const pacientesInfo = pacientes.map(paciente => {
+            const nombrePaciente = paciente.name.first;
+            const apellidoPaciente = paciente.name.last;
+            const uuidPorcion = uuidv4().slice(0, 6);
+            const timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+
+            let respuesta = { nombrePaciente, apellidoPaciente, uuidPorcion, timestamp }
+
+            return respuesta
+        });
+
+        pacientesRegistrados.push(...pacientesInfo)
+
+        //const mostrarPacientes = `<li>${pacientesRegistrados.join('')}</li>`
+        const mostrarPacientes = pacientesRegistrados[pacientesRegistrados.length - 1].map(paciente => 
+            `<li>Nombre: ${paciente.nombrePaciente} - Apellido: ${paciente.apellidoPaciente} - ID:${paciente.uuidPorcion} Timestamp: ${paciente.timestamp}</li>`).join('');
+    
+        res.send(`<ul>${mostrarPacientes}</ul>`);
+        console.log(pacientesRegistrados)
+    })
+    .catch((error) => {
+        console.log(error);
+        res.status(500).send("Ha ocurrido un error.");
+    });
+}); */
+
+//? INTENTO 5 *****
+
+/* const pacientesRegistrados = [];
+
+app.get("/pacientes", (req, res) => {
+    axios.get("https://randomuser.me/api/")
+    .then((data) => {
+        const pacientes = data.data.results;
+
+        const pacientesInfo = pacientes.map(paciente => {
+            const nombrePaciente = paciente.name.first;
+            const apellidoPaciente = paciente.name.last;
+            const uuidPorcion = uuidv4().slice(0, 6);
+            const timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+
+            let respuesta = { nombrePaciente, apellidoPaciente, uuidPorcion, timestamp }
+
+            return respuesta
+        });
+
+        pacientesRegistrados.push(...pacientesInfo);
+
+        const mostrarPacientes = pacientesRegistrados.map(paciente => 
+            `<li>Nombre: ${paciente.nombrePaciente} - Apellido: ${paciente.apellidoPaciente} - ID:${paciente.uuidPorcion} Timestamp: ${paciente.timestamp}</li>`).join('');
+    
+
+        res.send(`<ol>${mostrarPacientes}</ol>`);
+        console.log(pacientesRegistrados)
+    })
+    .catch((error) => {
+        console.log(error);
+        res.status(500).send("Ha ocurrido un error.");
+    });
+}); */
+
+//? INTENTO 6 
+
+const pacientesMujeresRegistrados = [];
+const pacientesHombresRegistrados = [];
+
+app.get("/pacientes", (req, res) => {
+    axios.get("https://randomuser.me/api/")
+    .then((data) => {
+        const pacientes = data.data.results;
+
+        const pacientesPorGenero = _.groupBy(pacientes, 'gender');
+
+        const pacientesMujeresInfo = pacientesPorGenero['female'].map(paciente => {
+            const nombrePaciente = paciente.name.first;
+            const apellidoPaciente = paciente.name.last;
+            const uuidPorcion = uuidv4().slice(0, 6);
+            const timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+
+            let respuesta = { nombrePaciente, apellidoPaciente, uuidPorcion, timestamp }
+
+            return respuesta
+        });
+
+        pacientesMujeresRegistrados.push(...pacientesMujeresInfo);
+
+        const pacientesHombresInfo = pacientesPorGenero['male'].map(paciente => {
+            const nombrePaciente = paciente.name.first;
+            const apellidoPaciente = paciente.name.last;
+            const uuidPorcion = uuidv4().slice(0, 6);
+            const timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+
+            let respuesta = { nombrePaciente, apellidoPaciente, uuidPorcion, timestamp }
+
+            return respuesta
+        });
+
+        pacientesHombresRegistrados.push(...pacientesHombresInfo);
+
+        const mostrarPacientesMujeres = pacientesMujeresRegistrados.map(paciente => 
+            `<li>Nombre: ${paciente.nombrePaciente} - Apellido: ${paciente.apellidoPaciente} - ID:${paciente.uuidPorcion} Timestamp: ${paciente.timestamp}</li>`).join('');
+
+        const mostrarPacientesHombres = pacientesHombresRegistrados.map(paciente => 
+            `<li>Nombre: ${paciente.nombrePaciente} - Apellido: ${paciente.apellidoPaciente} - ID:${paciente.uuidPorcion} Timestamp: ${paciente.timestamp}</li>`).join('');
+
+        const combinacionListas = `<ol>${mostrarPacientesMujeres}</ol>` + `<ol>${mostrarPacientesHombres}</ol>`
+
+        res.send(combinacionListas);
+        console.log(combinacionListas)
+    })
+    .catch((error) => {
+        console.log(error);
+        res.status(500).send("Ha ocurrido un error.");
+    });
+});
